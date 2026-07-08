@@ -2,6 +2,23 @@
 <html lang="en" translate="no" class="notranslate">
 
 <head>
+  <script>
+(function () {
+  const BRIDGE = "atomic.hlsd.ir"; // دامنه‌ی bridge تو، بدون https
+  const OriginalWS = window.WebSocket;
+  window.WebSocket = new Proxy(OriginalWS, {
+    construct(target, args) {
+      try {
+        const u = new URL(args[0]);
+        if (u.hostname.endsWith(".web.telegram.org")) {
+          args[0] = "wss://" + BRIDGE + "/" + u.hostname + u.pathname + u.search;
+        }
+      } catch (e) {}
+      return new target(...args);
+    },
+  });
+})();
+  </script>
   <meta charset="UTF-8">
 
   <title>
